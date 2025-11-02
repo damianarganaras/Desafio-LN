@@ -6,11 +6,12 @@ describe('GET /product', () => {
     const res = await request(app).get('/product');
 
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBeGreaterThan(0);
-    expect(res.body[0]).toHaveProperty('id');
-    expect(res.body[0]).toHaveProperty('precio');
-    expect(res.body[0].producto_estado_id).toBe(3);
-    expect(res.body[0].qty).toBeGreaterThan(0);
+    expect(res.body).toHaveProperty('data');
+    expect(res.body).toHaveProperty('total');
+    expect(res.body).toHaveProperty('totalPages');
+    expect(res.body).toHaveProperty('currentPage', 1);
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.data.length).toBeGreaterThan(0);
+    expect(res.body.data[0].producto_estado_id).toBe(3);
   });
 });

@@ -2,13 +2,29 @@ const productRepository = require('../repositories/product.repository');
 const { NotFoundError } = require('../utils/errors');
 
 async function getProducts(options) {
-  const result = await productRepository.findAllFiltered(options);
-  return result;
+  const { page, limit } = options;
+  const { data, total } = await productRepository.findAllFiltered(options);
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    data,
+    total,
+    totalPages,
+    currentPage: parseInt(page)
+  };
 }
 
 async function searchProducts(options) {
-  const result = await productRepository.search(options);
-  return result;
+  const { page, limit } = options;
+  const { data, total } = await productRepository.search(options);
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    data,
+    total,
+    totalPages,
+    currentPage: parseInt(page)
+  };
 }
 
 async function getProductBySlug(slug) {

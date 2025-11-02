@@ -21,6 +21,17 @@ async function findAllFiltered(options) {
     orderByClause = `p.fecha_creacion ${validOrderBy}`;
   }
 
+  const countSql = `
+    SELECT COUNT(*) AS total
+    FROM productos p
+    INNER JOIN lista_precios lp ON p.id = lp.producto_id
+    INNER JOIN producto_categoria pc ON p.producto_categoria_id = pc.id
+    WHERE p.qty > 0 
+      AND p.producto_estado_id = 3 
+      AND p.ubicacion_imagen IS NOT NULL 
+      AND lp.precio > 0
+  `;
+
   const sql = `
     SELECT 
       p.id,
@@ -46,8 +57,10 @@ async function findAllFiltered(options) {
     LIMIT ? OFFSET ?
   `;
 
+  const [totalRows] = await pool.query(countSql);
   const [rows] = await pool.query(sql, [limit, offset]);
-  return rows;
+
+  return { data: rows, total: totalRows[0].total };
 }
 
 async function search(options) {
@@ -72,6 +85,14 @@ async function search(options) {
     orderByClause = `p.fecha_creacion ${validOrderBy}`;
   }
 
+  const countSql = `
+    SELECT COUNT(*) AS total
+    FROM productos p
+    INNER JOIN lista_precios lp ON p.id = lp.producto_id
+    INNER JOIN producto_categoria pc ON p.producto_categoria_id = pc.id
+    WHERE (p.sku LIKE ? OR p.descripcion_corta LIKE ? OR p.descripcion_larga LIKE ?)
+  `;
+
   const sql = `
     SELECT 
       p.id,
@@ -94,8 +115,10 @@ async function search(options) {
     LIMIT ? OFFSET ?
   `;
 
+  const [totalRows] = await pool.query(countSql, [searchTerm, searchTerm, searchTerm]);
   const [rows] = await pool.query(sql, [searchTerm, searchTerm, searchTerm, limit, offset]);
-  return rows;
+
+  return { data: rows, total: totalRows[0].total };
 }
 
 async function findBySlug(slug) {
