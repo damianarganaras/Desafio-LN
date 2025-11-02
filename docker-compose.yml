@@ -6,7 +6,7 @@ services:
   api:
     build: .
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       - ./src:/app/src
     depends_on:
@@ -20,7 +20,10 @@ services:
   # DB MySQL
   db:
     image: mysql:8.0
-    command: --default-authentication-plugin=mysql_native_password
+    command: 
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: desafio_ln_123

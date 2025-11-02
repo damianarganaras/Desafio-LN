@@ -1,5 +1,7 @@
+SET NAMES utf8mb4;
+
 CREATE TABLE `productos` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
   `sku` varchar(255),
   `descripcion_corta` varchar(255),
   `descripcion_larga` varchar(255),
@@ -9,35 +11,35 @@ CREATE TABLE `productos` (
   `producto_categoria_id` integer NOT NULL,
   `producto_estado_id` integer NOT NULL,
   `fecha_creacion` timestamp
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `producto_estado` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
   `descripcion` varchar(255)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `lista_precios` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
   `precio` decimal,
   `fecha_desde` timestamp,
   `fecha_hasta` timestamp,
   `producto_id` integer NOT NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `producto_tipo` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
   `codigo` varchar(255),
   `descripcion` varchar(255)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `producto_categoria` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
   `codigo` varchar(255),
   `descripcion` varchar(255)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `pedidos` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
   `fecha_circulacion` timestamp,
   `precio` decimal,
   `clase_entrega` varchar(255),
@@ -46,15 +48,15 @@ CREATE TABLE `pedidos` (
   `producto_id` integer NOT NULL,
   `cliente_id` integer NOT NULL,
   `cantidad_solicitada` integer
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `clientes` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
   `nombre` varchar(255),
   `apellido` varchar(255),
   `domicilio` varchar(255),
   `cuit` varchar(255)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ALTER TABLE `productos` ADD FOREIGN KEY (`producto_estado_id`) REFERENCES `producto_estado` (`id`);
 
@@ -129,10 +131,10 @@ INSERT INTO lista_precios (id, precio, fecha_desde, fecha_hasta, producto_id) VA
   (5, 17, '2025-09-05 03:00:00.000000', '2025-12-01 03:00:00.000000', 4);
 
 -- INSERT DE PEDIDOS --
-INSERT INTO pedidos (id, fecha_circulacion, precio, clase_entrega, id_cliente, condicion_pago_aplicada, producto_id, cliente_id, cantidad_solicitada) VALUES
-  (1, '2025-01-03 00:00:00.000000', 888, 'ASG', '106', 'FAC', 2, 1, 5),
-  (2, '2025-11-03 00:00:00.000000', 78, 'ASG', '106', 'FAC', 3, 1, 15),
-  (3, '2025-11-13 00:00:00.000000', 17, 'REP', '106', 'FAC', 4, 2, 74),
-  (4, '2025-12-01 00:00:00.000000', 45, 'REP', '106', 'FAC', 5, 2, 45),
-  (5, '2025-10-01 00:00:00.000000', 5, 'ASIG', '106', 'FAC', 5, 3, 45),
-  (6, '2025-10-11 00:00:00.000000', 35, 'ASIG', '106', 'FAC', 10, 4, 8);
+INSERT INTO pedidos (fecha_circulacion, precio, clase_entrega, id_cliente, condicion_pago_aplicada, producto_id, cliente_id, cantidad_solicitada) VALUES
+  ('2025-01-03 00:00:00.000000', 888, 'ASG', '106', 'FAC', 2, 1, 5),
+  ('2025-11-03 00:00:00.000000', 78, 'ASG', '106', 'FAC', 3, 1, 15),
+  ('2025-11-13 00:00:00.000000', 17, 'REP', '106', 'FAC', 4, 2, 74),
+  ('2025-12-01 00:00:00.000000', 45, 'REP', '106', 'FAC', 5, 2, 45),
+  ('2025-10-01 00:00:00.000000', 5, 'ASIG', '106', 'FAC', 5, 3, 45),
+  ('2025-10-11 00:00:00.000000', 35, 'ASIG', '106', 'FAC', 10, 4, 8);

@@ -1,11 +1,19 @@
 const express = require('express');
-const app = express();
-const port = 3000;
+const config = require('./config');
+const errorHandler = require('./middleware/errorHandler');
+const productRoutes = require('./routes/product.routes');
+const orderRoutes = require('./routes/order.routes');
 
-app.get('/', (req, res) => {
-  res.send('El servidor ATR funcionando piola');
-});
+const app = express();
+const port = config.api.port;
+
+app.use(express.json());
+
+app.use('/product', productRoutes);
+app.use('/order', orderRoutes);
+
+app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log(`Escuchando servidor en http://localhost:${port}`);
+  console.log(`Servidor escuchando en http://localhost:${port}`);
 });
