@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  
+  # API Node.js
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=desafio_ln_123
+      - DB_NAME=desafio_ln
+
+  # DB MySQL
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: desafio_ln_123
+      MYSQL_DATABASE: desafio_ln
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+# Volumenes
+volumes:
+  mysql-data:
