@@ -1,6 +1,7 @@
-const pool = require('../config/database');
+const getPool = require('../config/database');
 
 async function search(filters) {
+  const pool = getPool();
   let sql = 'SELECT p.*, c.nombre, c.apellido, c.cuit FROM pedidos p LEFT JOIN clientes c ON p.cliente_id = c.id';
   
   const whereClauses = [];
@@ -35,7 +36,7 @@ async function search(filters) {
 }
 
 async function create(orderData, connection) {
-  const client = connection || pool;
+  const client = connection || getPool();
   const sql = 'INSERT INTO pedidos SET ?';
   const [result] = await client.query(sql, orderData);
   return result;

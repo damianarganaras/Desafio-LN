@@ -1,6 +1,7 @@
-const pool = require('../config/database');
+const getPool = require('../config/database');
 
 async function findAllFiltered(options) {
+  const pool = getPool();
   const { page, limit, sortBy, orderBy } = options;
 
   const allowedSortBy = ['fecha_creacion', 'precio', 'categoria'];
@@ -50,6 +51,7 @@ async function findAllFiltered(options) {
 }
 
 async function search(options) {
+  const pool = getPool();
   const { q, page, limit, sortBy, orderBy } = options;
 
   const allowedSortBy = ['fecha_creacion', 'precio', 'categoria'];
@@ -97,6 +99,7 @@ async function search(options) {
 }
 
 async function findBySlug(slug) {
+  const pool = getPool();
   const sql = `
     SELECT 
       p.id,
@@ -122,6 +125,7 @@ async function findBySlug(slug) {
 }
 
 async function findRelated(productId, categoryId) {
+  const pool = getPool();
   const sql = `
     SELECT 
       id,
@@ -144,14 +148,14 @@ async function findRelated(productId, categoryId) {
 }
 
 async function findById(id, connection) {
-  const client = connection || pool;
+  const client = connection || getPool();
   const sql = 'SELECT * FROM productos WHERE id = ?';
   const [rows] = await client.query(sql, [id]);
   return rows[0];
 }
 
 async function updateStock(id, newQuantity, connection) {
-  const client = connection || pool;
+  const client = connection || getPool();
   const sql = 'UPDATE productos SET qty = ? WHERE id = ?';
   await client.query(sql, [newQuantity, id]);
 }

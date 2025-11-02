@@ -1,4 +1,4 @@
-const pool = require('../config/database');
+const getPool = require('../config/database');
 const orderRepository = require('../repositories/order.repository');
 const productRepository = require('../repositories/product.repository');
 const { ValidationError, NotFoundError } = require('../utils/errors');
@@ -9,6 +9,7 @@ async function searchOrders(filters) {
 }
 
 async function createOrder(orderData) {
+  const pool = getPool();
   let connection;
 
   try {
