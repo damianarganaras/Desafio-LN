@@ -30,9 +30,20 @@ class ValidationError extends AppError {
   }
 }
 
+class UnauthorizedError extends AppError {
+  constructor(description) {
+    super(
+      'Unauthorized',
+      401,
+      description || 'No estás autorizado para realizar esta acción.'
+    );
+  }
+}
+
 module.exports = {
   AppError,
   NotFoundError,
   BadRequestError,
-  ValidationError
+  ValidationError,
+  UnauthorizedError
 };

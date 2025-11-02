@@ -16,6 +16,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=desafio_ln_123
       - DB_NAME=desafio_ln
+      - API_KEY=nacion-secret-key-123
 
   # DB MySQL
   db:

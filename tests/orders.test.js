@@ -6,6 +6,7 @@ describe('POST /order', () => {
   it('debería devolver 400 si faltan datos (DTO)', async () => {
     const res = await request(app)
       .post('/order')
+      .set('x-api-key', global.apiKey)
       .send({ cliente_id: 1, cantidad_solicitada: 1 });
 
     expect(res.statusCode).toBe(400);
@@ -21,6 +22,7 @@ describe('POST /order', () => {
 
     const res = await request(app)
       .post('/order')
+      .set('x-api-key', global.apiKey)
       .send(body);
 
     expect(res.statusCode).toBe(404);
@@ -36,6 +38,7 @@ describe('POST /order', () => {
 
     const res = await request(app)
       .post('/order')
+      .set('x-api-key', global.apiKey)
       .send(body);
 
     expect(res.statusCode).toBe(400);
@@ -56,6 +59,7 @@ describe('POST /order', () => {
     try {
       const res = await request(app)
         .post('/order')
+        .set('x-api-key', global.apiKey)
         .send({
           producto_id: productoId,
           cliente_id: 2,

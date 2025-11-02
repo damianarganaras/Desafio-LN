@@ -3,7 +3,7 @@ const app = require('../src/app');
 
 describe('GET /product', () => {
   it('debería devolver 200 y una lista de productos disponibles', async () => {
-    const res = await request(app).get('/product');
+    const res = await request(app).get('/product').set('x-api-key', global.apiKey);
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('data');

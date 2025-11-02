@@ -8,7 +8,17 @@ const options = {
       version: '1.0.0',
       description: 'API para el desafío técnico de La Nación - Node.js - Express - MySQL.'
     },
+    security: [{
+      apiKeyAuth: []
+    }],
     components: {
+      securitySchemes: {
+        apiKeyAuth: {
+          type: 'apiKey',
+          in: 'header',
+          name: 'x-api-key'
+        }
+      },
       schemas: {
         Error: {
           type: 'object',
