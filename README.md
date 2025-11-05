@@ -87,6 +87,56 @@ npm test
 
 Los tests corren contra la base de datos dockerizada (leyendo el `.env.test`) y son **idempotentes** (limpian los datos que crean/modifican).
 
+### Cobertura de Tests
+
+El proyecto cuenta con **12 tests de integración** que cubren todos los endpoints principales:
+
+- **5 tests de productos:** GET /product, GET /search (2 tests), GET /:slug (2 tests)
+- **7 tests de órdenes:** POST /order (4 tests), GET /order (3 tests)
+
+Para ejecutar los tests con reporte de cobertura:
+
+```bash
+npm test -- --coverage
+```
+
+**Cobertura actual: 93%**
+
+
+File                       | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+---------------------------|---------|----------|---------|---------|-------------------
+All files                  |      93 |    69.91 |   89.65 |   92.94 |
+ src                       |     100 |      100 |     100 |     100 |
+  app.js                   |     100 |      100 |     100 |     100 |
+ src/DTOs                  |     100 |      100 |     100 |     100 |
+  create-order.dto.js      |     100 |      100 |     100 |     100 |
+ src/config                |   86.36 |       50 |      50 |   86.36 |
+  database.js              |   78.57 |       50 |      50 |   78.57 | 28-30
+  index.js                 |     100 |       50 |     100 |     100 | 2-9
+  swagger.js               |     100 |      100 |     100 |     100 |
+ src/controllers           |   88.88 |    94.44 |     100 |   88.88 |
+  order.controller.js      |      90 |      100 |     100 |      90 | 9
+  product.controller.js    |   88.23 |    94.44 |     100 |   88.23 | 16,34
+ src/middleware            |    92.3 |       70 |     100 |    92.3 |
+  auth.middleware.js       |    87.5 |       75 |     100 |    87.5 | 9
+  errorHandler.js          |     100 |    42.85 |     100 |     100 | 4-6
+  validation.middleware.js |    90.9 |    88.88 |     100 |    90.9 | 15
+ src/repositories          |    92.3 |    59.37 |     100 |    92.3 |
+  order.repository.js      |    92.3 |       75 |     100 |    92.3 | 11-12
+  product.repository.js    |    92.3 |       50 |     100 |    92.3 | 17,19,81,83
+ src/routes                |     100 |      100 |     100 |     100 |
+  order.routes.js          |     100 |      100 |     100 |     100 |
+  product.routes.js        |     100 |      100 |     100 |     100 |
+ src/services              |   97.87 |       88 |     100 |   97.77 |
+  order.service.js         |   96.77 |    86.95 |     100 |   96.55 | 22
+  product.service.js       |     100 |      100 |     100 |     100 |
+ src/utils/errors          |   81.81 |       25 |      60 |   81.81 |
+  AppError.js              |     100 |      100 |     100 |     100 |
+  index.js                 |   66.66 |       25 |      50 |   66.66 | 15,35
+---------------------------|---------|----------|---------|---------|-----------------
+
+La cobertura supera ampliamente el estándar recomendado del 80%, con módulos críticos como `product.service.js` y `order.service.js` alcanzando el 100%.
+
 ---
 
 ## Decisiones de Arquitectura y Diseño
