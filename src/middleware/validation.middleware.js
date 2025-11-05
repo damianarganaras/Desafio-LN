@@ -1,7 +1,8 @@
 const { ValidationError } = require('../utils/errors');
 
+// Realiza la validación de un DTO en la solicitud
 function validateDto(dto) {
-  return function(req, res, next) {
+  return function (req, res, next) {
     const fields = Object.keys(dto);
 
     for (const field of fields) {

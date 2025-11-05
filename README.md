@@ -1,83 +1,135 @@
 # Desafío Backend - Gestor de Catálogo (La Nación)
 
-Esta es la solución al Challenge Backend. Es una API REST para un gestor de catálogo, hecha con Node.js, Express y MySQL. Como se pedía en el desafío, no usé ningún ORM, todo el acceso a datos es con queries SQL crudas.
+Este proyecto es una API REST para un gestor de catálogo, hecha con Node.js, Express y MySQL. Como se pedía en el desafío, no usé ningún ORM, todo el acceso a datos es con queries SQL crudas.
 
 El proyecto está 100% dockerizado, así que para levantarlo es un solo comando.
 
------
+---
 
-## Stack
+## Índice
 
-  * **Servidor:** Node.js, Express
-  * **Base de Datos:** MySQL 8.0 (usando el driver `mysql2/promise`)
-  * **Docker:** Docker y Docker Compose
-  * **Documentación:** Swagger (OpenAPI 3.0)
+* [Cómo Correr el Proyecto](#cómo-correr-el-proyecto)
+* [Documentación y Pruebas de API](#documentación-y-pruebas-de-api)
+* [Cómo Correr los Tests](#cómo-correr-los-tests)
+* [Decisiones de Arquitectura y Diseño](#decisiones-de-arquitectura-y-diseño)
+* [Stack Tecnológico](#stack-tecnológico)
+* [Resetear la Base de Datos](#resetear-la-base-de-datos)
 
------
+---
 
-## Arquitectura y Decisiones de Diseño
+## Cómo Correr el Proyecto
 
-La arquitectura está separada por capas, como pedía el desafío, para mantener todo ordenado y modular:
+### Prerrequisitos
 
-  * **/src/routes:** Definen los endpoints de la API. Acá también están los comentarios JSDoc para que Swagger arme la documentación.
-  * **/src/controllers:** Manejan el `req` y `res`. No tienen lógica de negocio, solo le pasan la posta al servicio.
-  * **/src/services:** Acá está el "core" de la lógica: validación de stock, coordinación de transacciones, etc.
-  * **/src/repositories:** Es la única capa que toca la base de datos. Como se pidió, **no hay ORMs**, solo SQL crudo usando `mysql2` y transacciones manuales.
-  * **/src/config:** Centraliza la config (variables de entorno) y el pool de conexiones.
-  * **/src/middleware:** Acá está el manejador de errores global y el middleware de validación para los DTOs.
-  * **/src/dtos:** Define la estructura de los datos que entran (ej. `POST /order`) para validarlos.
+Para correr el proyecto, solo necesitaríamos tener:
 
------
+* [Docker](https://www.docker.com/products/docker-desktop/)
+* [Git](https://git-scm.com/) (para clonar el repo)
 
-## Prerrequisitos
+### 1. Clonar el repo
 
-Para correr el proyecto, solo necesitás tener:
+```bash
+git clone https://github.com/damianarganaras/Desafio-LN.git
+cd desafio-ln
+````
 
-  * [Docker](https://www.docker.com/products/docker-desktop/)
-  * [Git](https://git-scm.com/) (para clonar el repo)
+### 2. Levantar los contenedores
 
------
+Este es el único comando que necesitamos. Va a construir la imagen de Node, bajar la de MySQL, iniciar todo y correr el `init.sql` para crear y poblar la base de datos automáticamente.
 
-## Cómo levantarlo
+```bash
+docker-compose up --build
+```
 
-1.  **Clonate el repo:**
+*(Uso `--build` para que `npm install` corra bien dentro del contenedor e instale las dependencias nuevas, como Swagger).*
 
-    ```bash
-    git clone https://github.com/damianarganaras/Desafio-LN.git
-    cd desafio-ln
-    ```
+### 3. Proyecto listo
 
-2.  **Levantá los contenedores:**
+  * La API se ejecuta en: **`http://localhost:3001`**
+  * La base de datos (MySQL) queda expuesta en: `localhost:3306` (por si queremos conectarnos con DBeaver por ejemplo).
 
-    ```bash
-    docker-compose up --build
-    ```
+---
 
-    *(Uso `--build` para que `npm install` corra bien dentro del contenedor e instale las dependencias nuevas, como Swagger).*
+## Documentación y Pruebas de API
 
-3.  **¡Listo\!**
+El desafío pedía Swagger o Postman. Elegí Swagger porque la documentación es interactiva y se puede probar todo desde la misma UI.
 
-      * La API queda corriendo en: **`http://localhost:3001`**
-      * La base de datos (MySQL) queda expuesta en: `localhost:3306` (por si querés chequearla con DBeaver o algo).
+La documentación completa, donde se puede leer y ejecutar cada endpoint, está acá:
 
------
+**`http://localhost:3001/api-docs`**
 
-## Documentación de la API (Swagger)
+### Autenticación
 
-El desafío pedía Swagger o Postman. Elegí Swagger porque la documentación queda "viva" y se puede probar todo desde la misma UI.
+Para cumplir con el requisito de "autenticación básica", **todos los endpoints están protegidos por una API Key.**
 
-La documentación completa, donde se puede leer y **ejecutar** cada endpoint, está acá:
+Para probar la API desde Swagger, tenés que seguir estos pasos:
 
-**➡️ `http://localhost:3001/api-docs`**
+1. Hacé clic en el botón **"Authorize"** (arriba a la derecha).
+2. En el campo `apiKeyAuth (x-api-key)`, ingresá la siguiente clave:
+   ```
+   nacion-secret-key-123
+   ```
+3. Hacé clic en "Authorize" y cerrá la ventana.
 
------
+Ahora todos los endpoints ejecutados desde Swagger incluirán el header `x-api-key` y funcionarán correctamente.
 
-### Cómo resetear la base de datos
+---
 
-Si querés volver a correr el `init.sql` y limpiar los datos (volver a fábrica), solo tenés que tirar este comando:
+## Cómo Correr los Tests
+
+El proyecto incluye una suite de tests de integración (usando Jest y Supertest) que valida toda la lógica de negocio, incluyendo las transacciones de `POST /order`.
+
+Para correrlos, primero asegurémonos de que los contenedores estén arriba (`docker-compose up`) y después ejecutamos:
+
+```bash
+npm test
+```
+
+Los tests corren contra la base de datos dockerizada (leyendo el `.env.test`) y son **idempotentes** (limpian los datos que crean/modifican).
+
+---
+
+## Decisiones de Arquitectura y Diseño
+
+Acá detallo algunas de las decisiones técnicas que tomé durante el desarrollo:
+
+* **Arquitectura de Capas:** El proyecto está separado en `/routes`, `/controllers`, `/services` y `/repositories`, como pedía el desafío, para mantener todo ordenado y modular.
+  * `/services` contiene la lógica de negocio (ej. transacciones).
+  * `/repositories` es la única capa que interactúa con la DB, usando 100% SQL crudo.
+  * `/dtos` y `/middleware` se encargan de la validación de inputs y el manejo de errores.
+
+* **Stack (Node.js vs. Strapi):** El desafío mencionaba Strapi como un plus, pero decidí ir por el camino de Node.js puro para tener control total del SQL.
+
+* **Manejo de Secretos (`.env` vs. Hardcodeo):** Aunque la "mejor práctica" es usar archivos `.env` (que ignoramos con `.gitignore`), para este desafío prioricé el requisito de "fácilmente ejecutable". Decidí "hardcodear" los secretos (`API_KEY`, `DB_PASSWORD`) en el `docker-compose.yml` para que la persona que lo ejecute el proyecto solo necesite correr `docker-compose up` y no tenga que andar creando y configurando archivos `.env` a mano.
+
+* **Testing (Tests Idempotentes):** Implementé tests de integración con Jest/Supertest. El test más complejo (`POST /order`) es "idempotente": lee el stock original, corre la prueba (que modifica el stock) y usa un bloque `finally` para restaurar el stock original. Esto asegura que los tests se puedan correr infinitas veces y siempre pasen.
+
+* **Paginación con Metadatos:** Los endpoints de listado (`/product` y `/search`) no solo devuelven un array. Hacen una segunda query (`SELECT COUNT(*)`) para devolver un objeto de metadatos de paginación (`{ data, total, totalPages, currentPage }`).
+
+* **Fix de UTF-8:** Durante el desarrollo tuve un bug con caracteres especiales (como `¡` o `Jardín`) al momento de cargar la DB. Lo solucioné forzando la codificación UTF-8 en los comandos del `docker-compose` de MySQL, en la conexión de `mysql2` en Node, y en la definición `CREATE TABLE` de cada tabla en el `init.sql`.
+
+* **Lógica de "Slug" (`GET /product/{SLUG}`):** Para este endpoint, se implementó en SQL usando `REGEXP_REPLACE` para transformar el `name` en un `slug` (minúsculas, espacios por guiones, sin caracteres especiales) directamente en la query, sin necesidad de almacenar un campo extra en la tabla.
+
+---
+
+## Stack de Tecnologías
+
+* **Servidor:** Node.js, Express
+* **Base de Datos:** MySQL 8.0 (con el driver `mysql2/promise`)
+* **Contenerización:** Docker y Docker Compose
+* **Documentación:** Swagger (OpenAPI 3.0)
+* **Testing:** Jest, Supertest
+
+---
+
+## Resetear la Base de Datos
+
+Para volver a correr el `init.sql` y limpiar los datos, solo debemos ejecutar este comando:
 
 ```bash
 docker-compose down --volumes
 ```
 
-Y después la levantás de nuevo con `docker-compose up`.
+Y después se levanta de nuevo con `docker-compose up`.
+
+```

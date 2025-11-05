@@ -8,7 +8,9 @@ async function findAllFiltered(options) {
   const allowedOrderBy = ['ASC', 'DESC'];
 
   const validSortBy = allowedSortBy.includes(sortBy) ? sortBy : 'fecha_creacion';
-  const validOrderBy = allowedOrderBy.includes(orderBy.toUpperCase()) ? orderBy.toUpperCase() : 'DESC';
+  const validOrderBy = allowedOrderBy.includes(orderBy.toUpperCase())
+    ? orderBy.toUpperCase()
+    : 'DESC';
 
   const offset = (page - 1) * limit;
 
@@ -21,6 +23,8 @@ async function findAllFiltered(options) {
     orderByClause = `p.fecha_creacion ${validOrderBy}`;
   }
 
+  // Ejecutamos una query aparte de COUNT para obtener el total de registros
+  // Esto es para calcular la paginación (totalPages)
   const countSql = `
     SELECT COUNT(*) AS total
     FROM productos p
@@ -71,7 +75,9 @@ async function search(options) {
   const allowedOrderBy = ['ASC', 'DESC'];
 
   const validSortBy = allowedSortBy.includes(sortBy) ? sortBy : 'fecha_creacion';
-  const validOrderBy = allowedOrderBy.includes(orderBy.toUpperCase()) ? orderBy.toUpperCase() : 'DESC';
+  const validOrderBy = allowedOrderBy.includes(orderBy.toUpperCase())
+    ? orderBy.toUpperCase()
+    : 'DESC';
 
   const offset = (page - 1) * limit;
   const searchTerm = `%${q}%`;
@@ -123,6 +129,9 @@ async function search(options) {
 
 async function findBySlug(slug) {
   const pool = getPool();
+  // Usamos REGEXP_REPLACE para transformar la descripción en un slug
+  // El regex '[^a-zA-Z0-9 .]' elimina todos los caracteres especiales excepto letras, números, espacios y puntos
+  // Luego con REPLACE convertimos espacios en guiones y LOWER normaliza todo el string a minúsculas
   const sql = `
     SELECT 
       p.id,

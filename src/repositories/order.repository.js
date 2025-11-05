@@ -2,8 +2,11 @@ const getPool = require('../config/database');
 
 async function search(filters) {
   const pool = getPool();
-  let sql = 'SELECT p.*, c.nombre, c.apellido, c.cuit FROM pedidos p LEFT JOIN clientes c ON p.cliente_id = c.id';
-  
+  let sql =
+    'SELECT p.*, c.nombre, c.apellido, c.cuit FROM pedidos p LEFT JOIN clientes c ON p.cliente_id = c.id';
+
+  // Construimos el WHERE según los filtros recibidos
+  // Evitamos SQL injection usando placeholders (?) con parámetros separados
   const whereClauses = [];
   const params = [];
 

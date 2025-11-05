@@ -34,7 +34,10 @@ async function getProductBySlug(slug) {
     throw new NotFoundError('El producto solicitado no existe.');
   }
 
-  const relatedProducts = await productRepository.findRelated(product.id, product.producto_categoria_id);
+  const relatedProducts = await productRepository.findRelated(
+    product.id,
+    product.producto_categoria_id
+  );
 
   return { product, relatedProducts };
 }

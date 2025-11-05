@@ -3,5 +3,8 @@ module.exports = {
   verbose: true,
   testMatch: ['**/tests/**/*.test.js'],
   setupFiles: ['./tests/setup.js'],
-  globalTeardown: './tests/teardown.js'
+  globalTeardown: './tests/teardown.js',
+  testEnvironmentOptions: {
+    NODE_ENV: 'test'
+  }
 };
