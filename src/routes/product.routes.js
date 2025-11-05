@@ -40,13 +40,28 @@ const router = express.Router();
  *         description: Dirección del ordenamiento
  *     responses:
  *       200:
- *         description: Lista de productos.
+ *         description: Lista paginada de productos.
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Product'
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Product'
+ *                 total:
+ *                   type: integer
+ *                 totalPages:
+ *                   type: integer
+ *                 currentPage:
+ *                   type: integer
+ *       401:
+ *         description: API Key inválida o faltante.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       500:
  *         description: Error del servidor.
  *         content:
@@ -98,13 +113,28 @@ router.get('/', productController.getProducts);
  *         description: Dirección del ordenamiento
  *     responses:
  *       200:
- *         description: Lista de productos.
+ *         description: Resultados paginados de la búsqueda.
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Product'
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Product'
+ *                 total:
+ *                   type: integer
+ *                 totalPages:
+ *                   type: integer
+ *                 currentPage:
+ *                   type: integer
+ *       401:
+ *         description: API Key inválida o faltante.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       500:
  *         description: Error del servidor.
  *         content:
@@ -131,7 +161,7 @@ router.get('/search', productController.searchProducts);
  *         description: Slug del producto
  *     responses:
  *       200:
- *         description: Detalle del producto.
+ *         description: Detalle del producto y productos relacionados.
  *         content:
  *           application/json:
  *             schema:
@@ -143,6 +173,12 @@ router.get('/search', productController.searchProducts);
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/Product'
+ *       401:
+ *         description: API Key inválida o faltante.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Producto no encontrado.
  *         content:

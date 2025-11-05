@@ -45,7 +45,7 @@ docker-compose up --build
 
 ### 3. Proyecto listo
 
-  * La API se ejecuta en: **`http://localhost:3001`**
+  * La API se ejecuta en: **`http://localhost:3000`**
   * La base de datos (MySQL) queda expuesta en: `localhost:3306` (por si queremos conectarnos con DBeaver por ejemplo).
 
 ---
@@ -56,7 +56,7 @@ El desafío pedía Swagger o Postman. Elegí Swagger porque la documentación es
 
 La documentación completa, donde se puede leer y ejecutar cada endpoint, está acá:
 
-**`http://localhost:3001/api-docs`**
+**`http://localhost:3000/swagger`**
 
 ### Autenticación
 
@@ -130,6 +130,8 @@ Para volver a correr el `init.sql` y limpiar los datos, solo debemos ejecutar es
 docker-compose down --volumes
 ```
 
-Y después se levanta de nuevo con `docker-compose up`.
+Y después se levanta de nuevo con:
 
+```bash
+docker-compose up
 ```

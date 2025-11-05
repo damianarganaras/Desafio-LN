@@ -38,13 +38,19 @@ const router = express.Router();
  *         description: Fecha máxima de circulación
  *     responses:
  *       200:
- *         description: Lista de pedidos.
+ *         description: Lista de pedidos filtrados.
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Order'
+ *       401:
+ *         description: API Key inválida o faltante.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       500:
  *         description: Error del servidor.
  *         content:
@@ -81,13 +87,30 @@ router.get('/', orderController.searchOrders);
  *               - cantidad_solicitada
  *     responses:
  *       201:
- *         description: Pedido creado.
+ *         description: Pedido creado exitosamente.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Order'
  *       400:
- *         description: Error de validación (Out of Stock o datos faltantes).
+ *         description: Datos inválidos o stock insuficiente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             examples:
+ *               validation:
+ *                 value:
+ *                   code: 400
+ *                   message: Validation Error
+ *                   description: El campo 'producto_id' es requerido.
+ *               outOfStock:
+ *                 value:
+ *                   code: 400
+ *                   message: Validation Error
+ *                   description: Out of Stock
+ *       401:
+ *         description: API Key inválida o faltante.
  *         content:
  *           application/json:
  *             schema:
@@ -98,6 +121,10 @@ router.get('/', orderController.searchOrders);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               code: 404
+ *               message: Not Found
+ *               description: El producto no existe.
  *       500:
  *         description: Error del servidor.
  *         content:
